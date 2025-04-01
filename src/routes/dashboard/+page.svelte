@@ -231,6 +231,26 @@ function formatDate(date: string | Date | null): string {
         day: 'numeric'
     });
 }
+
+    // import jsPDF from 'jspdf';
+    // import html2canvas from 'html2canvas';
+
+    //   async function exportToPDF() {
+    //     const dashboardElement = document.querySelector('.container'); // Selects the main dashboard container
+    //     if (!dashboardElement) return;
+
+    //     // Convert the dashboard to an image
+    //     const canvas = await html2canvas(dashboardElement, { scale: 2 });
+    //     const imgData = canvas.toDataURL('image/png');
+
+    //     // Create PDF
+    //     const pdf = new jsPDF('p', 'mm', 'a4');
+    //     const imgWidth = 210; // A4 width in mm
+    //     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    //     pdf.addImage(imgData, 'PNG', 0, 10, imgWidth, imgHeight);
+    //     pdf.save('dashboard_report.pdf');
+    //   }
   </script>
   
   <nav class="!bg-emerald-500 shadow-lg fixed w-full top-0 z-50">
@@ -255,9 +275,9 @@ function formatDate(date: string | Date | null): string {
         <a href="/reports" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Reports</a>
     </div>
 </nav>
-
+  <p class="mt-20"></p>
   
-  <div class="container mx-auto p-6">
+  <div class="container mx-auto p-6 mt-5">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="flex flex-wrap justify-between items-center mb-8">
@@ -290,16 +310,16 @@ function formatDate(date: string | Date | null): string {
           </form>
           
           <!-- Export Button -->
-          <form action="?/exportData" method="post">
-            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">
+          <!-- on:click={exportToPDF} -->
+            <button  class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition mt-6">
               📥 Export Data
             </button>
-          </form>
+
         </div>
       </div>
   
       <!-- Stat Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8 ">
         {#each [
           { title: "Total Tickets", value: data.stats.totalTickets, color: "text-gray-800" },
           { title: "Paid Tickets", value: data.stats.paidTickets, color: "text-green-600", percentage: Math.round((data.stats.paidTickets / data.stats.totalTickets) * 100) || 0 },
@@ -309,13 +329,14 @@ function formatDate(date: string | Date | null): string {
         ] as stat}
           <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
             <h3 class="text-sm font-medium text-gray-500 mb-1">{stat.title}</h3>
-            <p class="text-3xl font-bold {stat.color}">{stat.value}</p>
+            <p class="text-3xl font-bold {stat.color}">{stat.value}</p> <!-- Added pr-4 for padding -->
             {#if stat.percentage !== undefined}
               <p class="text-sm text-gray-500 mt-1">{stat.percentage}% of total</p>
             {/if}
           </div>
         {/each}
       </div>
+      
   
       <!-- Charts Section -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
