@@ -20,7 +20,7 @@ const validSortFields = {
 type SortField = keyof typeof validSortFields;
 type SortOrder = 'asc' | 'desc';
 
-export async function load({ url, fetch }) {
+export async function load({ url }: { url: URL }) {
   try {
     // Parse query parameters with proper type checking
     const userId = url.searchParams.get('userId');
@@ -121,7 +121,7 @@ export async function load({ url, fetch }) {
 // Handle form submissions for creating new tickets
 export const actions = {
   // Create a new ticket
-  createTicket: async ({ request, fetch }) => {
+  createTicket: async ({ request, fetch }: { request: Request; fetch: typeof globalThis.fetch }) => {
     try {
       const formData = await request.formData();
       
@@ -172,7 +172,7 @@ export const actions = {
   },
   
   // Update an existing ticket
-  updateTicket: async ({ request }) => {
+  updateTicket: async ({ request }: { request: Request }) => {
     try {
         const formData = await request.formData();
 
@@ -214,7 +214,7 @@ export const actions = {
 },
   
   // Delete a ticket
-  deleteTicket: async ({ request, fetch }) => {
+  deleteTicket: async ({ request, fetch }: { request: Request; fetch: typeof globalThis.fetch }) => {
     try {
       const formData = await request.formData();
       
@@ -243,7 +243,7 @@ export const actions = {
   },
   
   // Pay a ticket
-  payTicket: async ({ request, fetch }) => {
+  payTicket: async ({ request, fetch }: { request: Request; fetch: typeof globalThis.fetch }) => {
     try {
       const formData = await request.formData();
       

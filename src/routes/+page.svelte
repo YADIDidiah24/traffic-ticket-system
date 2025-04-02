@@ -35,29 +35,26 @@
 
 
 
+<!-- <nav class="!bg-emerald-500 shadow-lg fixed w-full top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="/" class="text-2xl font-semibold tracking-wide !text-white">TrafficFlow</a>
+        <div class="hidden md:flex space-x-6 ">
+            <a href="/" class="!text-white hover:text-cyan-300 transition-colors font-medium">Home</a>
+            <a href="/tickets" class=" !text-white hover:text-cyan-300 transition-colors font-medium">Tickets</a>
+            <a href="/dashboard" class="!text-white hover:text-cyan-300 transition-colors font-medium">Dashboard</a>
+            <a href="/users" class="!text-white hover:text-cyan-300 transition-colors font-medium">Users</a>
+        </div>
+        <button class="md:hidden focus:outline-none" id="menu-toggle" aria-label="Toggle mobile menu">
+            <svg class="h-8 w-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+    </div>
+</nav> -->
+
+
 <div class="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 text-slate-800 dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 dark:text-slate-200">
-    <nav class="!bg-emerald-500 shadow-lg fixed w-full top-0 z-50">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/" class="text-2xl font-semibold tracking-wide !text-white">TrafficFlow</a>
-            <div class="hidden md:flex space-x-6 ">
-                <a href="/" class="!text-white hover:text-cyan-300 transition-colors font-medium">Home</a>
-                <a href="/tickets" class=" !text-white hover:text-cyan-300 transition-colors font-medium">Tickets</a>
-                <a href="/dashboard" class="!text-white hover:text-cyan-300 transition-colors font-medium">Dashboard</a>
-                <a href="/users" class="!text-white hover:text-cyan-300 transition-colors font-medium">Users</a>
-            </div>
-            <button class="md:hidden focus:outline-none" id="menu-toggle" aria-label="Toggle mobile menu">
-                <svg class="h-8 w-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
-            </button>
-        </div>
-        <div class="hidden md:hidden bg-[#172554] absolute w-full left-0 top-full py-2" id="mobile-menu">
-            <a href="/" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Home</a>
-            <a href="/tickets" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Tickets</a>
-            <a href="/dashboard" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Dashboard</a>
-            <a href="/reports" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Reports</a>
-        </div>
-    </nav>
+
     
     
 

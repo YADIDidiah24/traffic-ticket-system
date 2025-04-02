@@ -3,7 +3,7 @@ import db from '$lib/server/db';
 import { trafficTickets, users } from '$lib/db/schema';
 import { eq, sql, desc, and, gte, lte } from 'drizzle-orm';
 
-export async function load({ url }) {
+export async function load({ url }: { url: URL }) {
   try {
     // Get date range filter parameters
     const startDate = url.searchParams.get('startDate') || getDateXDaysAgo(30);
@@ -51,7 +51,6 @@ export async function load({ url }) {
       .orderBy(sql`count(*) DESC`)
       .limit(5),
       
-      // Ticket trend over time (by month)
       db.select({
         month: sql<string>`to_char(${trafficTickets.dateIssued}, 'YYYY-MM')`,
         count: sql<number>`count(*)`,
@@ -67,7 +66,6 @@ export async function load({ url }) {
       .groupBy(sql`to_char(${trafficTickets.dateIssued}, 'YYYY-MM')`)
       .orderBy(sql`to_char(${trafficTickets.dateIssued}, 'YYYY-MM')`),
       
-      // Top offenders
       db.select({
         userId: trafficTickets.userId,
         fullName: users.fullName,
@@ -83,7 +81,6 @@ export async function load({ url }) {
       .limit(10)
     ]);
     
-    // Recent tickets for quick reference
     const recentTickets = await db
       .select({
         ticket: trafficTickets,
@@ -120,18 +117,15 @@ export async function load({ url }) {
   }
 }
 
-// Helper function to get date from X days ago in YYYY-MM-DD format
 function getDateXDaysAgo(days: number): string {
   const date = new Date();
   date.setDate(date.getDate() - days);
   return date.toISOString().split('T')[0];
 }
 
-export const actions = {
-  // You can add form actions here if needed for the dashboard
-  // For example, to export data, change date ranges, etc.
-  exportData: async ({ request }) => {
-    // Implementation for data export would go here
-    return { success: true };
-  }
-};
+// export const actions = {
+
+//   exportData: async ({ request }) => {
+//     return { success: true };
+//   }
+// };
