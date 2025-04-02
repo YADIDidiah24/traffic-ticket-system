@@ -380,7 +380,7 @@
                     <select
                         id="status"
                         name="status"
-                        class="shadow-lg appearance-none border rounded w-full py-3 px-4 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                        class="shadow-lg appearance-none border rounded w-full py-3 px-4 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50 text-black"
                     >
                         <option value="unpaid">Unpaid</option>
                         <option value="paid">Paid</option>
