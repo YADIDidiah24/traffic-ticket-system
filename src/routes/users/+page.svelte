@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "../../../src/app.css";
     import { enhance } from '$app/forms';
 
     interface User {
@@ -51,16 +52,46 @@
     function handleSuccess() {
         resetForm();
     }
-</script>
 
+    // Sort states
+    let sortBy = 'fullName';
+    let sortOrder = 'asc';
+    
+    // Function to toggle sort order
+    function toggleSort(field: string) {
+        if (sortBy === field) {
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortBy = field;
+            sortOrder = 'asc';
+        }
+    }
+    
+    // Helper function to get sort indicator
+    function getSortIndicator(field: string) {
+        if (sortBy !== field) return '';
+        return sortOrder === 'asc' ? '↑' : '↓';
+    }
+
+    // Search functionality
+    let searchTerm = '';
+    $: filteredUsers = users.filter(user => 
+        user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (user.phoneNumber && user.phoneNumber.includes(searchTerm)) ||
+        (user.address && user.address.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+</script>
+<br>
+<br>
+<br>
 <svelte:head>
     <title>User Management</title>
 </svelte:head>
 
-
 <nav class="!bg-emerald-500 shadow-lg fixed w-full top-0 z-50">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <a href="/" class="text-2xl font-semibold tracking-wide !text-white">TrafficFlow</a>
+        <a href="/" class="text-2xl font-semibold tracking-wide text-white">TrafficFlow</a>
         <div class="hidden md:flex space-x-6 ">
             <a href="/" class="!text-white hover:text-cyan-300 transition-colors font-medium">Home</a>
             <a href="/tickets" class=" !text-white hover:text-cyan-300 transition-colors font-medium">Tickets</a>
@@ -73,48 +104,53 @@
             </svg>
         </button>
     </div>
-    <div class="hidden md:hidden bg-[#172554] absolute w-full left-0 top-full py-2" id="mobile-menu">
-        <a href="/" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Home</a>
-        <a href="/tickets" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Tickets</a>
-        <a href="/dashboard" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Dashboard</a>
-        <a href="/reports" class="block px-6 py-3 hover:bg-[#0F172A] transition-colors">Reports</a>
-    </div>
 </nav>
 
-
-
-
-
 <div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-8 text-center text-blue-600">User Management</h1>
+    <h1 class="text-3xl font-bold text-white mb-6 text-center">User Management</h1>
 
-    <div class="mb-6 flex justify-end">
-        {#if !isCreating && !editingUser}
-            <button 
-                on:click={startCreateUser}
-                class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg shadow-md transition-colors duration-200"
-            >
-                Add New User
-            </button>
-        {:else}
-            <button 
-                on:click={resetForm}
-                class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-lg shadow-md mr-2 transition-colors duration-200"
-            >
-                Cancel
-            </button>
-        {/if}
+    <!-- Search and Action Buttons -->
+    <div class="bg-gradient-to-r from-purple-500 via-blue-600 to-teal-500 p-8 rounded-lg shadow-lg mb-6">
+        <div class="flex flex-col md:flex-row justify-between mb-4">
+            <div class="w-full md:w-1/2 mb-4 md:mb-0 md:mr-4">
+                <label class="block text-white text-sm font-bold mb-2" for="search">
+                    Search Users
+                </label>
+                <input 
+                    id="search" 
+                    type="text" 
+                    class="shadow-lg appearance-none border rounded w-full py-3 px-4 !text-black leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                    placeholder="Search by name, email, phone..."
+                    bind:value={searchTerm}
+                >
+            </div>
+            <div class="flex items-end">
+                {#if !isCreating && !editingUser}
+                    <button 
+                        on:click={startCreateUser}
+                        class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all duration-300"
+                    >
+                        Add New User
+                    </button>
+                {:else}
+                    <button 
+                        on:click={resetForm}
+                        class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-300"
+                    >
+                        Cancel
+                    </button>
+                {/if}
+            </div>
+        </div>
     </div>
 
-    {#if isCreating || editingUser}
-        <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-700">
-                {isCreating ? 'Create New User' : 'Edit User'}
-            </h2>
-
+    <!-- Create User Form -->
+    {#if isCreating}
+        <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-8 rounded-lg shadow-lg mb-6">
+            <h2 class="text-2xl font-semibold text-white mb-6">Create New User</h2>
             <form 
                 method="POST" 
-                action="?/{isCreating ? 'createUser' : 'updateUser'}" 
+                action="?/createUser" 
                 use:enhance={() => {
                     return ({ result }) => {
                         if (result.type === 'success') {
@@ -122,97 +158,202 @@
                         }
                     };
                 }}
-                class="space-y-5"
             >
-                {#if editingUser}
-                    <input type="hidden" name="id" value={editingUser} />
-                {/if}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="mb-6">
+                        <label for="fullName" class="block text-white text-sm font-bold mb-2">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            name="fullName" 
+                            bind:value={formData.fullName} 
+                            class="shadow-lg appearance-none border rounded w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                            required
+                        />
+                    </div>
 
-                <div>
-                    <label for="fullName" class="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
-                    <input 
-                        type="text" 
-                        id="fullName" 
-                        name="fullName" 
-                        bind:value={formData.fullName} 
-                        class="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        required
-                    />
+                    <div class="mb-6">
+                        <label for="email" class="block text-white text-sm font-bold mb-2">Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            bind:value={formData.email} 
+                            class="shadow-lg appearance-none border rounded w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="phoneNumber" class="block text-white text-sm font-bold mb-2">Phone Number</label>
+                        <input 
+                            type="tel" 
+                            id="phoneNumber" 
+                            name="phoneNumber" 
+                            bind:value={formData.phoneNumber} 
+                            class="shadow-lg appearance-none border rounded w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="address" class="block text-white text-sm font-bold mb-2">Address</label>
+                        <textarea 
+                            id="address" 
+                            name="address" 
+                            bind:value={formData.address} 
+                            class="shadow-lg appearance-none border rounded w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                            rows="3"
+                        ></textarea>
+                    </div>
                 </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        bind:value={formData.email} 
-                        class="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        required
-                    />
+                <div class="flex items-center justify-between mt-6">
+                    <button 
+                        type="submit" 
+                        class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all duration-300"
+                    >
+                        Create User
+                    </button>
+                    <button 
+                        type="button" 
+                        on:click={resetForm}
+                        class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-300"
+                    >
+                        Cancel
+                    </button>
                 </div>
-
-                <div>
-                    <label for="phoneNumber" class="block text-sm font-medium text-gray-600 mb-1">Phone Number</label>
-                    <input 
-                        type="tel" 
-                        id="phoneNumber" 
-                        name="phoneNumber" 
-                        bind:value={formData.phoneNumber} 
-                        class="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                </div>
-
-                <div>
-                    <label for="address" class="block text-sm font-medium text-gray-600 mb-1">Address</label>
-                    <textarea 
-                        id="address" 
-                        name="address" 
-                        bind:value={formData.address} 
-                        class="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        rows="3"
-                    ></textarea>
-                </div>
-
-                <button 
-                    type="submit" 
-                    class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg shadow-md transition-colors duration-200"
-                >
-                    {isCreating ? 'Create User' : 'Update User'}
-                </button>
             </form>
         </div>
     {/if}
 
-    <div class="overflow-x-auto bg-white shadow-lg rounded-lg p-4">
-        <table class="min-w-full bg-gray-50 border-separate border-spacing-0">
-            <thead class="bg-gray-100">
+    <!-- Edit User Form -->
+    {#if editingUser}
+        <div class="bg-gradient-to-r from-red-300 to-blue-500 p-8 rounded-lg shadow-lg mb-6">
+            <h2 class="text-2xl font-semibold text-white mb-6">Edit User</h2>
+            <form 
+                method="POST" 
+                action="?/updateUser" 
+                use:enhance={() => {
+                    return ({ result }) => {
+                        if (result.type === 'success') {
+                            handleSuccess();
+                        }
+                    };
+                }}
+            >
+                <input type="hidden" name="id" value={editingUser} />
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="mb-6">
+                        <label for="editFullName" class="block text-white text-sm font-bold mb-2">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="editFullName" 
+                            name="fullName" 
+                            bind:value={formData.fullName} 
+                            class="shadow-lg appearance-none border rounded w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="editEmail" class="block text-white text-sm font-bold mb-2">Email</label>
+                        <input 
+                            type="email" 
+                            id="editEmail" 
+                            name="email" 
+                            bind:value={formData.email} 
+                            class="shadow-lg appearance-none border rounded w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="editPhoneNumber" class="block text-white text-sm font-bold mb-2">Phone Number</label>
+                        <input 
+                            type="tel" 
+                            id="editPhoneNumber" 
+                            name="phoneNumber" 
+                            bind:value={formData.phoneNumber} 
+                            class="shadow-lg appearance-none border rounded w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                        />
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="editAddress" class="block text-white text-sm font-bold mb-2">Address</label>
+                        <textarea 
+                            id="editAddress" 
+                            name="address" 
+                            bind:value={formData.address} 
+                            class="shadow-lg appearance-none border rounded w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-amber-50"
+                            rows="3"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mt-6">
+                    <button 
+                        type="submit" 
+                        class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all duration-300"
+                    >
+                        Update User
+                    </button>
+                    <button 
+                        type="button" 
+                        on:click={resetForm}
+                        class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-300"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    {/if}
+
+    <!-- Results Summary -->
+    <div class="mb-4 text-gray-900">
+        <p class="text-lg font-semibold">
+            Showing {filteredUsers.length} {filteredUsers.length === 1 ? 'user' : 'users'}
+            {searchTerm ? `matching "${searchTerm}"` : ''}
+        </p>
+    </div>
+
+    <!-- Users Table -->
+    <div class="overflow-x-auto shadow-2xl rounded-lg bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 p-4">
+        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+            <thead class="bg-gradient-to-r from-blue-600 to-teal-500 text-white">
                 <tr>
-                    <th class="py-3 px-6 text-left text-gray-600 font-medium">Full Name</th>
-                    <th class="py-3 px-6 text-left text-gray-600 font-medium">Email</th>
-                    <th class="py-3 px-6 text-left text-gray-600 font-medium">Phone Number</th>
-                    <th class="py-3 px-6 text-left text-gray-600 font-medium">Address</th>
-                    <th class="py-3 px-6 text-center text-gray-600 font-medium">Actions</th>
+                    <th class="py-3 px-4 text-left font-semibold text-sm cursor-pointer" on:click={() => toggleSort('fullName')}>
+                        Full Name {getSortIndicator('fullName')}
+                    </th>
+                    <th class="py-3 px-4 text-left font-semibold text-sm cursor-pointer" on:click={() => toggleSort('email')}>
+                        Email {getSortIndicator('email')}
+                    </th>
+                    <th class="py-3 px-4 text-left font-semibold text-sm cursor-pointer" on:click={() => toggleSort('phoneNumber')}>
+                        Phone Number {getSortIndicator('phoneNumber')}
+                    </th>
+                    <th class="py-3 px-4 text-left font-semibold text-sm">Address</th>
+                    <th class="py-3 px-4 text-center font-semibold text-sm">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {#if users.length === 0}
+                {#if filteredUsers.length === 0}
                     <tr>
-                        <td colspan="5" class="py-4 px-6 text-center text-gray-500">
-                            No users found. Create a new user to get started.
+                        <td colspan="5" class="py-6 px-6 text-center text-gray-500">
+                            {searchTerm ? 'No users found matching your search.' : 'No users found. Create a new user to get started.'}
                         </td>
                     </tr>
                 {:else}
-                    {#each users as user}
-                        <tr class="hover:bg-gray-100 transition-colors duration-200 text-blue-500">
-                            <td class="py-3 px-6">{user.fullName}</td>
-                            <td class="py-3 px-6">{user.email}</td>
-                            <td class="py-3 px-6">{user.phoneNumber || '-'}</td>
-                            <td class="py-3 px-6">{user.address || '-'}</td>
-                            <td class="py-3 px-6 text-center">
+                    {#each filteredUsers as user}
+                        <tr class="border-b border-gray-200 hover:bg-teal-50 transition-all duration-300">
+                            <td class="py-3 px-6 text-gray-900">{user.fullName}</td>
+                            <td class="py-3 px-6 text-gray-900">{user.email}</td>
+                            <td class="py-3 px-6 text-gray-900">{user.phoneNumber || '-'}</td>
+                            <td class="py-3 px-6 text-gray-900">{user.address || '-'}</td>
+                            <td class="py-3 px-6 flex justify-center space-x-2">
                                 <button 
                                     on:click={() => editUser(user)}
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg shadow-md text-sm mr-2 transition-colors duration-200"
+                                    class="bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 rounded-lg py-2 px-4 transition-all duration-300"
                                 >
                                     Edit
                                 </button>
@@ -225,21 +366,21 @@
                                 >
                                     <input type="hidden" name="id" value={user.id} />
                                     <button
-                                    type="submit"
-                                    class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg shadow-md text-sm transition-colors duration-200"
-                                    on:click|preventDefault={(e) => {
-                                        if (confirm('Are you sure you want to delete this user?')) {
-                                            if (e.target instanceof HTMLElement) {
-                                                const form = e.target.closest('form');
-                                                if (form) {
-                                                    form.submit();
+                                        type="button"
+                                        class="bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 rounded-lg py-2 px-4 transition-all duration-300"
+                                        on:click|preventDefault={(e) => {
+                                            if (confirm('Are you sure you want to delete this user?')) {
+                                                if (e.target instanceof HTMLElement) {
+                                                    const form = e.target.closest('form');
+                                                    if (form) {
+                                                        form.submit();
+                                                    }
                                                 }
                                             }
-                                        }
-                                    }}
-                                >
-                                    Delete
-                                </button>
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -254,10 +395,10 @@
     <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
         <p class="text-xl">&copy; 2025 TrafficFlow System. All rights reserved.</p>
         <div class="flex space-x-6 mt-4 md:mt-0">
-            <a href="/about" class="text-black hover:text-cyan-400 ">About</a>
-            <a href="/privacy" class="text-gray-300 hover:text-cyan-400 ">Privacy</a>
+            <a href="/about" class="text-black hover:text-cyan-400">About</a>
+            <a href="/privacy" class="text-gray-300 hover:text-cyan-400">Privacy</a>
             <a href="/terms" class="text-gray-300 hover:text-cyan-400">Terms</a>
-            <a href="/contact" class="text-gray-300 hover:text-cyan-400 ">Contact</a>
+            <a href="/contact" class="text-gray-300 hover:text-cyan-400">Contact</a>
         </div>
     </div>
-    </footer>
+</footer>
