@@ -35,9 +35,9 @@
 
 
 
-<!-- <nav class="!bg-emerald-500 shadow-lg fixed w-full top-0 z-50">
+<nav class="!bg-emerald-500 shadow-lg fixed w-full top-0 z-50">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <a href="/" class="text-2xl font-semibold tracking-wide !text-white">TrafficFlow</a>
+        <a href="/" class="text-2xl font-semibold tracking-wide text-white">TrafficFlow</a>
         <div class="hidden md:flex space-x-6 ">
             <a href="/" class="!text-white hover:text-cyan-300 transition-colors font-medium">Home</a>
             <a href="/tickets" class=" !text-white hover:text-cyan-300 transition-colors font-medium">Tickets</a>
@@ -50,7 +50,7 @@
             </svg>
         </button>
     </div>
-</nav> -->
+</nav>
 
 
 <div class="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 text-slate-800 dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 dark:text-slate-200">
